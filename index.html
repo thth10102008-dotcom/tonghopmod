@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tổng Hợp Game & Kiếm Tiền</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Tùy chỉnh màu sắc (Theme Variables) */
+        :root {
+            --bg-color: #f3f4f6;
+            --text-color: #1f2937;
+            --card-bg: #ffffff;
+            --primary-color: #ef4444; /* Đỏ Free Fire */
+            --secondary-color: #3b82f6; /* Xanh Roblox */
+            --accent-color: #10b981; /* Xanh Kiếm Tiền */
+            --header-bg: rgba(255, 255, 255, 0.85);
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            --bg-color: #111827;
+            --text-color: #f9fafb;
+            --card-bg: #1f2937;
+            --header-bg: rgba(31, 41, 55, 0.85);
+            --border-color: #374151;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        
+        body { background-color: var(--bg-color); color: var(--text-color); transition: var(--transition); line-height: 1.6; }
+
+        /* Header (Thanh điều hướng) */
+        header {
+            position: sticky; top: 0; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 5%; background-color: var(--header-bg);
+            backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        .logo { font-size: 24px; font-weight: 700; background: linear-gradient(to right, var(--primary-color), var(--secondary-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .search-container input {
+            padding: 10px 15px; border-radius: 20px; border: 1px solid var(--border-color);
+            background: var(--card-bg); color: var(--text-color); width: 250px; outline: none; transition: var(--transition);
+        }
+        .search-container input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }
+        .header-actions button { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-color); transition: var(--transition); }
+        .header-actions button:hover { transform: scale(1.1); }
+
+        /* Banner (Hero Section) */
+        .hero {
+            text-align: center; padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(59,130,246,0.1));
+            border-bottom: 1px solid var(--border-color);
+        }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 10px; font-weight: 700; }
+        .hero p { color: #6b7280; font-size: 1.1rem; margin-bottom: 30px; }
+        .categories a {
+            display: inline-block; padding: 10px 25px; margin: 5px; font-weight: 500;
+            background-color: var(--card-bg); color: var(--text-color);
+            text-decoration: none; border-radius: 30px; border: 1px solid var(--border-color);
+            box-shadow: var(--shadow); transition: var(--transition);
+        }
+        .categories a:hover { transform: translateY(-3px); box-shadow: var(--hover-shadow); background-color: var(--primary-color); color: white; }
+
+        /* Main Content & Grid */
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .section-title {
+            font-size: 1.8rem; font-weight: 700; margin-bottom: 25px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .section-title::before { content: ""; display: block; width: 6px; height: 30px; background-color: var(--primary-color); border-radius: 3px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-bottom: 50px; }
+        
+        /* Card Styles */
+        .card {
+            background-color: var(--card-bg); border-radius: 16px; overflow: hidden;
+            box-shadow: var(--shadow); transition: var(--transition); border: 1px solid var(--border-color);
+            display: flex; flex-direction: column; height: 100%;
+        }
+        .card:hover { transform: translateY(-8px); box-shadow: var(--hover-shadow); }
+        .card-img-wrapper { overflow: hidden; height: 180px; position: relative; }
+        .card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .card:hover img { transform: scale(1.08); }
+        .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card h3 { font-size: 1.1rem; margin-bottom: 15px; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;}
+        
+        /* Links in Card */
+        .links-wrapper { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+        .web-link {
+            display: block; text-align: center; padding: 10px; border-radius: 8px;
+            background-color: #f3f4f6; color: #374151; text-decoration: none; font-size: 14px; font-weight: 500;
+            transition: var(--transition); border: 1px solid var(--border-color);
+        }
+        body.dark-mode .web-link { background-color: #374151; color: #e5e7eb; }
+        .web-link:hover { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .web-link.link-2:hover { background-color: var(--secondary-color); border-color: var(--secondary-color); }
+        .web-link.link-3:hover { background-color: var(--accent-color); border-color: var(--accent-color); }
+
+        /* Loading Spinner */
+        .loader-container { display: flex; justify-content: center; align-items: center; padding: 50px; flex-direction: column; gap: 15px; }
+        .spinner { border: 4px solid rgba(0,0,0,0.1); border-left-color: var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        body.dark-mode .spinner { border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--primary-color); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Admin Form */
+        .admin-section {
+            background-color: var(--card-bg); padding: 30px; border-radius: 16px;
+            box-shadow: var(--shadow); border: 1px solid var(--border-color); margin-top: 50px;
+        }
+        .admin-section h3 { margin-bottom: 20px; font-size: 1.5rem; color: var(--primary-color); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 5px; font-size: 0.9rem; }
+        .admin-section input, .admin-section select, .admin-section textarea {
+            width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color);
+            background-color: var(--bg-color); color: var(--text-color); font-size: 0.95rem; outline: none; transition: var(--transition);
+        }
+        .admin-section input:focus, .admin-section select:focus, .admin-section textarea:focus { border-color: var(--primary-color); }
+        .row-links { display: flex; gap: 15px; flex-wrap: wrap; }
+        .row-links .form-group { flex: 1; min-width: 200px; }
+        .btn-submit {
+            background-color: var(--primary-color); color: white; padding: 15px 30px;
+            border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem;
+            width: 100%; transition: var(--transition); box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
+        }
+        .btn-submit:hover { background-color: #dc2626; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(239, 68, 68, 0.4); }
+
+        footer { text-align: center; padding: 30px; margin-top: 50px; border-top: 1px solid var(--border-color); color: #6b7280; font-size: 0.9rem; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            header { flex-wrap: wrap; gap: 15px; justify-content: center; }
+            .search-container { order: 3; width: 100%; }
+            .search-container input { width: 100%; }
+            .hero h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">🔥HACKHUB</div>
+        <div class="search-container">
+            <input type="text" placeholder="🔍 Tìm kiếm game, thủ thuật...">
+        </div>
+        <div class="header-actions">
+            <button onclick="toggleDarkMode()" title="Giao diện Sáng/Tối">🌓</button>
+        </div>
+    </header>
+
+    <div class="hero">
+        <h1>Khám Phá Thế Giới Game & Kiếm Tiền</h1>
+        <p>Cập nhật liên tục các thủ thuật Free Fire, bản mod Roblox và mẹo kiếm tiền online</p>
+        <div class="categories">
+            <a href="#freefire">🔥 Free Fire</a>
+            <a href="#roblox">🎮 Roblox</a>
+            <a href="#kiemtien">💰 Kiếm Tiền Online</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="content-container">
+            <div class="loader-container">
+                <div class="spinner"></div>
+                <p>Đang đồng bộ dữ liệu từ đám mây...</p>
+            </div>
+        </div>
+
+        <div class="admin-section">
+            <h3>⚙️ Bảng Điều Khiển (Admin)</h3>
+            <form id="postForm">
+                <div class="form-group">
+                    <label>Tiêu đề bài viết</label>
+                    <input type="text" id="title" required placeholder="Nhập tiêu đề thật hấp dẫn...">
+                </div>
+
+                <div class="row-links">
+                    <div class="form-group">
+                        <label>Chuyên mục</label>
+                        <select id="category">
+                            <option value="Free Fire">🔥 Free Fire</option>
+                            <option value="Roblox">🎮 Roblox</option>
+                            <option value="Kiếm Tiền">💰 Web Kiếm Tiền</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Link Ảnh bìa (URL)</label>
+                        <input type="text" id="image" required placeholder="https://...">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Mô tả / Nội dung ngắn</label>
+                    <textarea id="content" rows="3" placeholder="Viết một vài dòng mô tả..."></textarea>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.02); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed var(--border-color);">
+                    <h4 style="margin-bottom: 10px; font-size: 0.95rem;">🔗 Cài đặt các nút đính kèm</h4>
+                    <div class="row-links">
+                        <div class="form-group"><input type="text" id="linkTitle1" placeholder="Tiêu đề Nút 1 (VD: Tải Menu)"></div>
+                        <div class="form-group"><input type="text" id="link1" placeholder="Link tải Nút 1..."></div>
+                    </div>
+                    <div class="row-links">
+                        <div class="form-group"><input type="text" id="linkTitle2" placeholder="Tiêu đề Nút 2 (VD: Nhận Key)"></div>
+                        <div class="form-group"><input type="text" id="link2" placeholder="Link Nút 2..."></div>
+                    </div>
+                    <div class="row-links">
+                        <div class="form-group"><input type="text" id="linkTitle3" placeholder="Tiêu đề Nút 3 (VD: Xem Video)"></div>
+                        <div class="form-group"><input type="text" id="link3" placeholder="Link Nút 3..."></div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="display: none;">
+                    <input type="text" id="video" placeholder="Link Youtube (Không bắt buộc)">
+                    <label><input type="checkbox" id="highlight"> Bài nổi bật</label>
+                </div>
+                
+                <button type="submit" class="btn-submit" id="submitBtn">🚀 Đăng Bài Viết Lên Hệ Thống</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Bản quyền thuộc về Web của bạn. Thiết kế hiện đại.</p>
+    </footer>
+
+    <script>
+        // API Google Apps Script của bạn
+        const API_URL = "https://script.google.com/macros/s/AKfycbw0jFmXyWvimxqFbmWm8d1Pcyof6w3gug0aYKRVR82xs0xnfDBOyr2dtklNQik1UacU/exec";
+
+        // Chế độ tối
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            // Lưu trạng thái vào trình duyệt
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+        }
+
+        // Tự động giữ chế độ tối nếu người dùng đã bật trước đó
+        if(localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Fetch Data
+        async function loadData() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                // Đảo ngược mảng để bài mới nhất lên đầu
+                data.reverse();
+
+                const ffData = data.filter(item => item.category === 'Free Fire');
+                const robloxData = data.filter(item => item.category === 'Roblox');
+                const ktData = data.filter(item => item.category === 'Kiếm Tiền');
+
+                document.getElementById('content-container').innerHTML = `
+                    ${renderSection('🔥 FREE FIRE', 'freefire', ffData)}
+                    ${renderSection('🎮 ROBLOX', 'roblox', robloxData)}
+                    ${renderSection('💰 WEB KIẾM TIỀN', 'kiemtien', ktData)}
+                `;
+            } catch (error) {
+                document.getElementById('content-container').innerHTML = `
+                    <div style="text-align:center; padding: 50px; color: var(--primary-color);">
+                        <h2>Lỗi kết nối máy chủ!</h2>
+                        <p>Vui lòng kiểm tra lại link API hoặc thử lại sau.</p>
+                    </div>`;
+            }
+        }
+
+        // Render HTML 
+        function renderSection(title, id, items) {
+            // Đổi màu cho tiêu đề section dựa vào ID
+            let colorCode = "var(--primary-color)";
+            if(id === 'roblox') colorCode = "var(--secondary-color)";
+            if(id === 'kiemtien') colorCode = "var(--accent-color)";
+
+            let html = `<h2 class="section-title" id="${id}" style="--primary-color: ${colorCode}">${title}</h2><div class="grid">`;
+            
+            if(items.length === 0) html += `<p style='grid-column: 1/-1; color: #888;'>Chưa có dữ liệu nào ở mục này.</p>`;
+            
+            items.forEach(item => {
+                let linksHtml = '';
+                if(item.link1) linksHtml += `<a href="${item.link1}" target="_blank" class="web-link">⚡ ${item.linkTitle1 || 'Tải Xuống 1'}</a>`;
+                if(item.link2) linksHtml += `<a href="${item.link2}" target="_blank" class="web-link link-2">💎 ${item.linkTitle2 || 'Tải Xuống 2'}</a>`;
+                if(item.link3) linksHtml += `<a href="${item.link3}" target="_blank" class="web-link link-3">▶️ ${item.linkTitle3 || 'Tải Xuống 3'}</a>`;
+
+                html += `
+                <div class="card">
+                    <div class="card-img-wrapper">
+                        <img src="${item.image}" alt="Hình ảnh" onerror="this.src='https://via.placeholder.com/400x200?text=No+Image'">
+                    </div>
+                    <div class="card-content">
+                        <h3>${item.title}</h3>
+                        ${item.content ? `<p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 15px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${item.content}</p>` : ''}
+                        <div class="links-wrapper">
+                            ${linksHtml || '<span style="font-size:12px; color:#9ca3af; text-align:center;">Không có tệp đính kèm</span>'}
+                        </div>
+                    </div>
+                </div>`;
+            });
+            html += `</div>`;
+            return html;
+        }
+
+        // Gọi hàm tải dữ liệu
+        loadData();
+
+        // Submit Form
+        document.getElementById("postForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById("submitBtn");
+            const originalText = btn.innerText;
+            btn.innerHTML = "⏳ Đang tải dữ liệu lên hệ thống...";
+            btn.disabled = true;
+
+            const postData = {
+                title: document.getElementById("title").value,
+                category: document.getElementById("category").value,
+                image: document.getElementById("image").value,
+                video: document.getElementById("video").value,
+                content: document.getElementById("content").value,
+                linkTitle1: document.getElementById("linkTitle1").value,
+                link1: document.getElementById("link1").value,
+                linkTitle2: document.getElementById("linkTitle2").value,
+                link2: document.getElementById("link2").value,
+                linkTitle3: document.getElementById("linkTitle3").value,
+                link3: document.getElementById("link3").value,
+                isHighlight: document.getElementById("highlight").checked
+            };
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(postData)
+                });
+            } catch (error) {
+                // Ignore CORS error for Apps Script
+            }
+            
+            alert("🎉 Đăng bài thành công!");
+            document.getElementById("postForm").reset();
+            btn.innerText = originalText;
+            btn.disabled = false;
+            
+            // Render lại dữ liệu thay vì f5
+            document.getElementById('content-container').innerHTML = `
+            <div class="loader-container">
+                <div class="spinner"></div><p>Đang tải bài viết mới...</p>
+            </div>`;
+            loadData();
+        });
+    </script>
+</body>
+</html>
