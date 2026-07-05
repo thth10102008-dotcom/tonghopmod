@@ -3,132 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video HackHub & Thủ Thuật</title>
+    <title>Thanh Đây - Video & Thủ Thuật Hack</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #0f172a;
-            --bg-card: #1e293b;
-            --bg-sidebar: #0b1120;
+            --bg-main: #0a0a0a;
+            --bg-card: #171717;
+            --bg-sidebar: #121212;
             --text-main: #f8fafc;
-            --text-sub: #94a3b8;
+            --text-sub: #a3a3a3;
             --primary: #3b82f6;
             --ff-color: #ef4444;
             --rb-color: #10b981;
             --mm-color: #f59e0b;
+            --acc-color: #ec4899;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
-        body { background-color: var(--bg-main); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
-
-        /* Popup Thông Báo */
-        #welcomeModal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px);
-            display: flex; justify-content: center; align-items: center; z-index: 9999;
+        /* Đổi nền cực chất */
+        body { 
+            background: radial-gradient(circle at 50% 0%, #1e1b4b, #0a0a0a 60%, #000000);
+            background-attachment: fixed;
+            color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; 
         }
-        .modal-content {
-            background: var(--bg-card); padding: 40px; border-radius: 16px;
-            text-align: center; max-width: 400px; width: 90%;
-            border: 1px solid #334155; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-        }
-        .modal-content h2 { font-size: 24px; margin-bottom: 15px; color: var(--primary); }
-        .modal-content p { color: var(--text-sub); margin-bottom: 25px; line-height: 1.5; }
-        .btn-close-modal {
-            background: var(--primary); color: white; border: none; padding: 12px 30px;
-            border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s;
-        }
-        .btn-close-modal:hover { background: #2563eb; }
 
         /* Sidebar Gốc Trái */
         .sidebar {
-            width: 260px; background-color: var(--bg-sidebar); border-right: 1px solid #1e293b;
-            padding: 20px 0; height: 100vh; position: fixed; display: flex; flex-direction: column;
+            width: 280px; background-color: rgba(18, 18, 18, 0.8); backdrop-filter: blur(10px);
+            border-right: 1px solid #262626; padding: 30px 20px; height: 100vh; position: fixed; 
+            display: flex; flex-direction: column; z-index: 100;
         }
-        .logo { font-size: 26px; font-weight: 800; text-align: center; margin-bottom: 40px; color: white; letter-spacing: 1px; }
+        .logo { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 40px; color: white; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .logo span { color: #ef4444; }
+        
+        .menu-list { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
         .menu-item {
-            padding: 15px 25px; display: flex; align-items: center; gap: 15px;
+            padding: 14px 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px;
             color: var(--text-sub); text-decoration: none; font-weight: 600;
-            cursor: pointer; transition: 0.3s; border-left: 4px solid transparent;
+            cursor: pointer; transition: all 0.3s ease; border: 1px solid transparent;
         }
-        .menu-item:hover, .menu-item.active { background: #1e293b; color: white; }
-        .menu-item.active.ff { border-left-color: var(--ff-color); }
-        .menu-item.active.rb { border-left-color: var(--rb-color); }
-        .menu-item.active.mm { border-left-color: var(--mm-color); }
+        .menu-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .menu-item.active { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .menu-item.active.ff { border-left: 4px solid var(--ff-color); }
+        .menu-item.active.rb { border-left: 4px solid var(--rb-color); }
+        .menu-item.active.mm { border-left: 4px solid var(--mm-color); }
+        .menu-item.active.acc { border-left: 4px solid var(--acc-color); }
+
+        /* Nút Mạng Xã Hội */
+        .socials { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+        .soc-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 12px; border-radius: 10px; text-decoration: none; font-weight: 600; color: white; transition: 0.3s;
+        }
+        .soc-btn.tele { background: rgba(36, 161, 222, 0.1); border: 1px solid #24A1DE; color: #24A1DE; }
+        .soc-btn.tele:hover { background: #24A1DE; color: white; }
+        .soc-btn.disc { background: rgba(88, 101, 242, 0.1); border: 1px solid #5865F2; color: #5865F2; }
+        .soc-btn.disc:hover { background: #5865F2; color: white; }
 
         /* Nội dung chính bên phải */
         .main-content {
-            margin-left: 260px; width: calc(100% - 260px); padding: 40px;
+            margin-left: 280px; width: calc(100% - 280px); padding: 40px; display: flex; flex-direction: column;
         }
-        .section-header { margin-bottom: 30px; font-size: 28px; font-weight: 800; border-bottom: 2px solid #334155; padding-bottom: 10px; }
+        
+        /* Thanh Tiêu đề & Tìm kiếm */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
+        .section-header { font-size: 32px; font-weight: 800; text-transform: uppercase; }
+        
+        .search-box { position: relative; width: 300px; }
+        .search-box input {
+            width: 100%; padding: 12px 20px 12px 40px; border-radius: 20px;
+            background: rgba(255,255,255,0.05); border: 1px solid #333; color: white; outline: none; transition: 0.3s;
+        }
+        .search-box input:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
+        .search-box::before { content: '🔍'; position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 14px; }
 
-        /* Lưới Video */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+        /* Cảnh báo Tặng Acc */
+        .alert-box {
+            background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-left: 5px solid #ef4444;
+            color: #fca5a5; padding: 20px; border-radius: 8px; margin-bottom: 30px;
+            font-weight: 600; display: none; line-height: 1.5;
+        }
+
+        /* Lưới Video/Card */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
         
         .card {
-            background: var(--bg-card); border-radius: 12px; overflow: hidden;
-            border: 1px solid #334155; transition: 0.3s; display: flex; flex-direction: column;
+            background: var(--bg-card); border-radius: 16px; overflow: hidden;
+            border: 1px solid #262626; transition: 0.3s; display: flex; flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        .card:hover { transform: translateY(-8px); border-color: #404040; box-shadow: 0 15px 30px rgba(0,0,0,0.8); }
         
-        /* Chứa Video YouTube */
-        .video-container {
-            position: relative; width: 100%; padding-bottom: 56.25%; /* Tỉ lệ 16:9 */ background: #000;
-        }
-        .video-container iframe {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
-        }
+        .video-container { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         
         .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
-        .card h3 { font-size: 18px; margin-bottom: 10px; line-height: 1.4; }
+        .card h3 { font-size: 18px; margin-bottom: 10px; line-height: 1.4; color: #fff; }
         .card p { font-size: 14px; color: var(--text-sub); margin-bottom: 20px; }
         
-        /* 3 Nút Link Đính Kèm */
         .links-group { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
         .download-btn {
             display: block; width: 100%; text-align: center; padding: 12px;
             border-radius: 8px; font-weight: 600; text-decoration: none; color: white;
-            transition: 0.3s; font-size: 14px;
+            transition: 0.3s; font-size: 14px; text-transform: uppercase;
         }
-        .btn-1 { background: #334155; } .btn-1:hover { background: #475569; }
-        .btn-2 { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.5); } 
-        .btn-2:hover { background: rgba(59, 130, 246, 0.4); }
-        .btn-3 { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.5); }
-        .btn-3:hover { background: rgba(16, 185, 129, 0.4); }
+        .btn-1 { background: linear-gradient(90deg, #3b82f6, #2563eb); } .btn-1:hover { filter: brightness(1.2); }
+        .btn-2 { background: rgba(255, 255, 255, 0.05); border: 1px solid #404040; } .btn-2:hover { background: rgba(255,255,255,0.1); }
+        .btn-3 { background: rgba(255, 255, 255, 0.05); border: 1px solid #404040; } .btn-3:hover { background: rgba(255,255,255,0.1); }
 
-        .loader { text-align: center; padding: 50px; color: var(--primary); font-size: 18px; font-weight: bold; }
+        .loader { text-align: center; padding: 50px; color: var(--text-sub); font-size: 16px; }
 
-        /* Mobile Responsive */
+        /* GIAO DIỆN ĐIỆN THOẠI (MOBILE RESPONSIVE) */
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; padding: 10px 0; border-right: none; border-bottom: 1px solid #1e293b; }
-            .logo { margin-bottom: 10px; }
+            
+            /* Sidebar biến thành menu cuộn ngang trên cùng */
+            .sidebar { 
+                width: 100%; height: auto; position: sticky; top: 0; 
+                padding: 15px 20px; border-right: none; border-bottom: 1px solid #262626;
+            }
+            .logo { font-size: 24px; margin-bottom: 15px; text-align: left; }
+            
+            .menu-list { flex-direction: row; overflow-x: auto; padding-bottom: 5px; gap: 10px; white-space: nowrap; }
+            .menu-list::-webkit-scrollbar { height: 4px; }
+            .menu-list::-webkit-scrollbar-thumb { background: #404040; border-radius: 10px; }
+            .menu-item { padding: 10px 15px; font-size: 14px; }
+            
+            .socials { display: none; /* Ẩn mxh trên header đt cho gọn, hoặc bạn có thể tạo nút nhỏ */ }
+            
+            /* Main content */
             .main-content { margin-left: 0; width: 100%; padding: 20px; }
+            .top-bar { flex-direction: column; align-items: flex-start; }
+            .search-box { width: 100%; }
+            .section-header { font-size: 24px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="welcomeModal">
-        <div class="modal-content">
-            <h2>Chào mừng bạn! 🎉</h2>
-            <p>Tại đây tổng hợp các video thủ thuật, bản cập nhật mới nhất của Free Fire, Roblox và các kèo kiếm tiền online xịn xò nhất.</p>
-            <button class="btn-close-modal" onclick="closeModal()">Vào Trang Web</button>
+    <div class="sidebar">
+        <div class="logo">🔥 <span>THANH ĐÂY</span></div>
+        
+        <div class="menu-list">
+            <div class="menu-item ff active" onclick="changeTab('Free Fire', this)">🔥 Free Fire</div>
+            <div class="menu-item rb" onclick="changeTab('Roblox', this)">🎮 Roblox</div>
+            <div class="menu-item mm" onclick="changeTab('Kiếm Tiền', this)">💰 Web Kiếm Tiền</div>
+            <div class="menu-item acc" onclick="changeTab('Tặng Acc Free', this)">🎁 Tặng Acc Free</div>
+        </div>
+
+        <div class="socials">
+            <div style="color: #666; font-size: 12px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase;">Cộng đồng</div>
+            <a href="LINK_TELEGRAM_CUA_BAN" target="_blank" class="soc-btn tele">✈️ Tham gia Telegram</a>
+            <a href="LINK_DISCORD_CUA_BAN" target="_blank" class="soc-btn disc">👾 Tham gia Discord</a>
         </div>
     </div>
 
-    <div class="sidebar">
-        <div class="logo">🔥THANH ĐÂY </div>
-        <div class="menu-item ff active" onclick="changeTab('Free Fire', this)">🔥 Free Fire</div>
-        <div class="menu-item rb" onclick="changeTab('Roblox', this)">🎮 Roblox</div>
-        <div class="menu-item mm" onclick="changeTab('Kiếm Tiền', this)">💰 Web Kiếm Tiền</div>
-    </div>
-
     <div class="main-content">
-        <h2 class="section-header" id="categoryTitle">🔥 Free Fire</h2>
+        <div class="top-bar">
+            <h2 class="section-header" id="categoryTitle">🔥 Free Fire</h2>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm video, acc..." onkeyup="searchContent()">
+            </div>
+        </div>
+
+        <div class="alert-box" id="accAlert">
+            ⚠️ <b>LƯU Ý QUAN TRỌNG:</b> Chuyên mục này chỉ chia sẻ, tặng Acc Free cho anh em xem kênh. Mình tuyệt đối KHÔNG buôn bán, KHÔNG trao đổi acc dưới mọi hình thức để tránh lừa đảo!
+        </div>
+
         <div id="contentArea">
-            <div class="loader">⏳ Đang tải dữ liệu video từ hệ thống...</div>
+            <div class="loader">⏳ Đang lấy dữ liệu từ máy chủ...</div>
         </div>
     </div>
 
@@ -136,44 +180,36 @@
         // Link API Google Sheets của bạn
         const API_URL = "https://script.google.com/macros/s/AKfycbw0jFmXyWvimxqFbmWm8d1Pcyof6w3gug0aYKRVR82xs0xnfDBOyr2dtklNQik1UacU/exec";
         
-        let allData = []; // Biến lưu toàn bộ dữ liệu
+        let allData = []; 
+        let currentCategory = 'Free Fire';
 
-        // 1. Đóng Popup thông báo
-        function closeModal() {
-            document.getElementById('welcomeModal').style.display = 'none';
-        }
-
-        // 2. Chuyển đổi Link Youtube thường thành link Embed để phát trực tiếp trên web
+        // Xử lý link Youtube
         function getEmbedUrl(url) {
             if (!url) return '';
             let videoId = '';
-            if (url.includes('youtube.com/watch?v=')) {
-                videoId = url.split('v=')[1].split('&')[0];
-            } else if (url.includes('youtu.be/')) {
-                videoId = url.split('youtu.be/')[1].split('?')[0];
-            } else if (url.includes('youtube.com/embed/')) {
-                return url; // Đã là link embed sẵn
-            }
+            if (url.includes('youtube.com/watch?v=')) videoId = url.split('v=')[1].split('&')[0];
+            else if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
+            else if (url.includes('youtube.com/embed/')) return url; 
             return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
         }
 
-        // 3. Tải dữ liệu từ Google Sheets
+        // Tải dữ liệu từ Google Sheets
         async function loadData() {
             try {
                 const response = await fetch(API_URL);
                 allData = await response.json();
                 allData.reverse(); // Mới nhất lên đầu
-                
-                // Mặc định load chuyên mục Free Fire đầu tiên
-                renderContent('Free Fire');
+                renderContent(currentCategory);
             } catch (error) {
-                document.getElementById('contentArea').innerHTML = "<p style='color:red;'>Lỗi tải dữ liệu. Vui lòng thử lại sau.</p>";
+                document.getElementById('contentArea').innerHTML = "<p style='color:#ef4444;'>Lỗi tải dữ liệu. Vui lòng F5 thử lại.</p>";
             }
         }
 
-        // 4. Chuyển tab khi bấm menu bên trái
+        // Chuyển tab menu
         function changeTab(category, element) {
-            // Đổi hiệu ứng sáng menu
+            currentCategory = category;
+            
+            // Xóa class active cũ, thêm vào menu mới bấm
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
             
@@ -181,33 +217,55 @@
             let titlePrefix = "🔥";
             if(category === "Roblox") titlePrefix = "🎮";
             if(category === "Kiếm Tiền") titlePrefix = "💰";
+            if(category === "Tặng Acc Free") titlePrefix = "🎁";
             document.getElementById('categoryTitle').innerText = `${titlePrefix} ${category}`;
 
-            // Render lại video
+            // Hiện/ẩn bảng cảnh báo Tặng Acc
+            if(category === "Tặng Acc Free") {
+                document.getElementById('accAlert').style.display = 'block';
+            } else {
+                document.getElementById('accAlert').style.display = 'none';
+            }
+
+            // Xóa chữ trong ô tìm kiếm khi chuyển tab
+            document.getElementById('searchInput').value = '';
+
             renderContent(category);
         }
 
-        // 5. Hiển thị Video và Link ra màn hình
-        function renderContent(category) {
-            const filteredData = allData.filter(item => item.category === category);
+        // Chức năng Tìm kiếm
+        function searchContent() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            renderContent(currentCategory, keyword);
+        }
+
+        // Hiển thị nội dung ra màn hình (Có kèm bộ lọc tìm kiếm)
+        function renderContent(category, keyword = '') {
+            let filteredData = allData.filter(item => item.category === category);
+            
+            // Nếu có gõ tìm kiếm thì lọc tiếp
+            if(keyword !== '') {
+                filteredData = filteredData.filter(item => item.title.toLowerCase().includes(keyword));
+            }
+
             const contentArea = document.getElementById('contentArea');
 
             if(filteredData.length === 0) {
-                contentArea.innerHTML = "<p style='color:var(--text-sub);'>Chưa có video nào ở mục này.</p>";
+                contentArea.innerHTML = "<p style='color:var(--text-sub);'>Không tìm thấy nội dung nào.</p>";
                 return;
             }
 
             let html = '<div class="grid">';
             filteredData.forEach(item => {
-                // Xử lý video hoặc ảnh bìa
                 let mediaHtml = '';
                 const embedLink = getEmbedUrl(item.video);
                 
                 if (embedLink) {
                     mediaHtml = `<div class="video-container"><iframe src="${embedLink}" allowfullscreen></iframe></div>`;
                 } else {
-                    // Nếu admin quên nhập link video, chỉ hiện ảnh bìa
-                    mediaHtml = `<img src="${item.image}" alt="Ảnh" style="width:100%; height:200px; object-fit:cover;">`;
+                    // Nếu là bài đăng Acc (Không có video), chỉ hiện ảnh
+                    let imgSource = item.image ? item.image : 'https://via.placeholder.com/600x337?text=NO+IMAGE';
+                    mediaHtml = `<img src="${imgSource}" alt="Ảnh" style="width:100%; height:200px; object-fit:cover;">`;
                 }
 
                 html += `
@@ -215,12 +273,12 @@
                     ${mediaHtml}
                     <div class="card-content">
                         <h3>${item.title}</h3>
-                        ${item.content ? `<p>${item.content}</p>` : ''}
+                        ${item.content ? `<p>${item.content.replace(/\n/g, '<br>')}</p>` : ''}
                         
                         <div class="links-group">
-                            ${item.link1 ? `<a href="${item.link1}" target="_blank" class="download-btn btn-1">${item.linkTitle1 || 'Tải Xuống 1'}</a>` : ''}
-                            ${item.link2 ? `<a href="${item.link2}" target="_blank" class="download-btn btn-2">${item.linkTitle2 || 'Link Dự Phòng 1'}</a>` : ''}
-                            ${item.link3 ? `<a href="${item.link3}" target="_blank" class="download-btn btn-3">${item.linkTitle3 || 'Link Dự Phòng 2'}</a>` : ''}
+                            ${item.link1 ? `<a href="${item.link1}" target="_blank" class="download-btn btn-1">${item.linkTitle1 || 'Lấy Link 1'}</a>` : ''}
+                            ${item.link2 ? `<a href="${item.link2}" target="_blank" class="download-btn btn-2">${item.linkTitle2 || 'Lấy Link 2'}</a>` : ''}
+                            ${item.link3 ? `<a href="${item.link3}" target="_blank" class="download-btn btn-3">${item.linkTitle3 || 'Lấy Link 3'}</a>` : ''}
                         </div>
                     </div>
                 </div>`;
@@ -229,7 +287,6 @@
             contentArea.innerHTML = html;
         }
 
-        // Khởi động lấy dữ liệu
         loadData();
     </script>
 </body>
