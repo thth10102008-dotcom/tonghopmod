@@ -21,7 +21,6 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
-        /* Đổi nền cực chất */
         body { 
             background: radial-gradient(circle at 50% 0%, #1e1b4b, #0a0a0a 60%, #000000);
             background-attachment: fixed;
@@ -66,7 +65,6 @@
             margin-left: 280px; width: calc(100% - 280px); padding: 40px; display: flex; flex-direction: column;
         }
         
-        /* Thanh Tiêu đề & Tìm kiếm */
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
         .section-header { font-size: 32px; font-weight: 800; text-transform: uppercase; }
         
@@ -106,33 +104,27 @@
         .download-btn {
             display: block; width: 100%; text-align: center; padding: 12px;
             border-radius: 8px; font-weight: 600; text-decoration: none; color: white;
-            transition: 0.3s; font-size: 14px; text-transform: uppercase;
+            transition: 0.3s; font-size: 14px; text-transform: uppercase; cursor: pointer;
         }
-        .btn-1 { background: linear-gradient(90deg, #3b82f6, #2563eb); } .btn-1:hover { filter: brightness(1.2); }
+        .btn-1 { background: linear-gradient(90deg, #3b82f6, #2563eb); border: none; } .btn-1:hover { filter: brightness(1.2); }
         .btn-2 { background: rgba(255, 255, 255, 0.05); border: 1px solid #404040; } .btn-2:hover { background: rgba(255,255,255,0.1); }
         .btn-3 { background: rgba(255, 255, 255, 0.05); border: 1px solid #404040; } .btn-3:hover { background: rgba(255,255,255,0.1); }
 
         .loader { text-align: center; padding: 50px; color: var(--text-sub); font-size: 16px; }
 
-        /* GIAO DIỆN ĐIỆN THOẠI (MOBILE RESPONSIVE) */
+        /* GIAO DIỆN ĐIỆN THOẠI */
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            
-            /* Sidebar biến thành menu cuộn ngang trên cùng */
             .sidebar { 
                 width: 100%; height: auto; position: sticky; top: 0; 
                 padding: 15px 20px; border-right: none; border-bottom: 1px solid #262626;
             }
             .logo { font-size: 24px; margin-bottom: 15px; text-align: left; }
-            
             .menu-list { flex-direction: row; overflow-x: auto; padding-bottom: 5px; gap: 10px; white-space: nowrap; }
             .menu-list::-webkit-scrollbar { height: 4px; }
             .menu-list::-webkit-scrollbar-thumb { background: #404040; border-radius: 10px; }
             .menu-item { padding: 10px 15px; font-size: 14px; }
-            
-            .socials { display: none; /* Ẩn mxh trên header đt cho gọn, hoặc bạn có thể tạo nút nhỏ */ }
-            
-            /* Main content */
+            .socials { display: none; }
             .main-content { margin-left: 0; width: 100%; padding: 20px; }
             .top-bar { flex-direction: column; align-items: flex-start; }
             .search-box { width: 100%; }
@@ -142,6 +134,7 @@
 </head>
 <body>
 
+    <!-- THANH MENU TRÁI -->
     <div class="sidebar">
         <div class="logo">🔥 <span>THANH ĐÂY</span></div>
         
@@ -159,6 +152,7 @@
         </div>
     </div>
 
+    <!-- NỘI DUNG CHÍNH -->
     <div class="main-content">
         <div class="top-bar">
             <h2 class="section-header" id="categoryTitle">🔥 Free Fire</h2>
@@ -177,13 +171,34 @@
     </div>
 
     <script>
-        // Link API Google Sheets của bạn
+        // 1. LINK API GOOGLE SHEETS
         const API_URL = "https://script.google.com/macros/s/AKfycbw0jFmXyWvimxqFbmWm8d1Pcyof6w3gug0aYKRVR82xs0xnfDBOyr2dtklNQik1UacU/exec";
         
+        // 2. LINK QUẢNG CÁO CỦA BẠN (Đã tích hợp)
+        const AD_LINK_1 = "https://www.effectivecpmnetwork.com/v3g8tvi2?key=40a3c0407a6d5a6a21fb09208dc6758d";
+        const AD_LINK_2 = "https://www.effectivecpmnetwork.com/sv6tbzd5ub?key=4090a8c585e33443de502ad7ec2678ba";
+        const AD_LINK_3 = "https://www.effectivecpmnetwork.com/sdmwabqk?key=99df44fe93fe3cdc2146ada41a3cf4b1";
+
         let allData = []; 
         let currentCategory = 'Free Fire';
+        
+        // Biến lưu trữ lịch sử những nút đã bị bấm
+        const clickedLinks = {};
 
-        // Xử lý link Youtube
+        // 3. HÀM XỬ LÝ CLICK CHÈN QUẢNG CÁO
+        function handleAdClick(event, realLink, adLink) {
+            event.preventDefault(); // Chặn việc mở link gốc ngay lập tức
+            
+            if (!clickedLinks[realLink]) {
+                // Lần 1: Chuyển sang link quảng cáo và đánh dấu đã click
+                clickedLinks[realLink] = true;
+                window.open(adLink, '_blank');
+            } else {
+                // Lần 2: Mở link gốc
+                window.open(realLink, '_blank');
+            }
+        }
+
         function getEmbedUrl(url) {
             if (!url) return '';
             let videoId = '';
@@ -193,57 +208,47 @@
             return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
         }
 
-        // Tải dữ liệu từ Google Sheets
         async function loadData() {
             try {
                 const response = await fetch(API_URL);
                 allData = await response.json();
-                allData.reverse(); // Mới nhất lên đầu
+                allData.reverse(); 
                 renderContent(currentCategory);
             } catch (error) {
                 document.getElementById('contentArea').innerHTML = "<p style='color:#ef4444;'>Lỗi tải dữ liệu. Vui lòng F5 thử lại.</p>";
             }
         }
 
-        // Chuyển tab menu
         function changeTab(category, element) {
             currentCategory = category;
             
-            // Xóa class active cũ, thêm vào menu mới bấm
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
             
-            // Đổi tiêu đề
             let titlePrefix = "🔥";
             if(category === "Roblox") titlePrefix = "🎮";
             if(category === "Kiếm Tiền") titlePrefix = "💰";
             if(category === "Tặng Acc Free") titlePrefix = "🎁";
             document.getElementById('categoryTitle').innerText = `${titlePrefix} ${category}`;
 
-            // Hiện/ẩn bảng cảnh báo Tặng Acc
             if(category === "Tặng Acc Free") {
                 document.getElementById('accAlert').style.display = 'block';
             } else {
                 document.getElementById('accAlert').style.display = 'none';
             }
 
-            // Xóa chữ trong ô tìm kiếm khi chuyển tab
             document.getElementById('searchInput').value = '';
-
             renderContent(category);
         }
 
-        // Chức năng Tìm kiếm
         function searchContent() {
             const keyword = document.getElementById('searchInput').value.toLowerCase();
             renderContent(currentCategory, keyword);
         }
 
-        // Hiển thị nội dung ra màn hình (Có kèm bộ lọc tìm kiếm)
         function renderContent(category, keyword = '') {
             let filteredData = allData.filter(item => item.category === category);
             
-            // Nếu có gõ tìm kiếm thì lọc tiếp
             if(keyword !== '') {
                 filteredData = filteredData.filter(item => item.title.toLowerCase().includes(keyword));
             }
@@ -263,11 +268,11 @@
                 if (embedLink) {
                     mediaHtml = `<div class="video-container"><iframe src="${embedLink}" allowfullscreen></iframe></div>`;
                 } else {
-                    // Nếu là bài đăng Acc (Không có video), chỉ hiện ảnh
                     let imgSource = item.image ? item.image : 'https://via.placeholder.com/600x337?text=NO+IMAGE';
                     mediaHtml = `<img src="${imgSource}" alt="Ảnh" style="width:100%; height:200px; object-fit:cover;">`;
                 }
 
+                // Cập nhật sự kiện onClick vào 3 nút tải để gọi hàm chặn quảng cáo
                 html += `
                 <div class="card">
                     ${mediaHtml}
@@ -276,9 +281,9 @@
                         ${item.content ? `<p>${item.content.replace(/\n/g, '<br>')}</p>` : ''}
                         
                         <div class="links-group">
-                            ${item.link1 ? `<a href="${item.link1}" target="_blank" class="download-btn btn-1">${item.linkTitle1 || 'Lấy Link 1'}</a>` : ''}
-                            ${item.link2 ? `<a href="${item.link2}" target="_blank" class="download-btn btn-2">${item.linkTitle2 || 'Lấy Link 2'}</a>` : ''}
-                            ${item.link3 ? `<a href="${item.link3}" target="_blank" class="download-btn btn-3">${item.linkTitle3 || 'Lấy Link 3'}</a>` : ''}
+                            ${item.link1 ? `<button onclick="handleAdClick(event, '${item.link1}', AD_LINK_1)" class="download-btn btn-1">${item.linkTitle1 || 'Lấy Link 1'}</button>` : ''}
+                            ${item.link2 ? `<button onclick="handleAdClick(event, '${item.link2}', AD_LINK_2)" class="download-btn btn-2">${item.linkTitle2 || 'Lấy Link 2'}</button>` : ''}
+                            ${item.link3 ? `<button onclick="handleAdClick(event, '${item.link3}', AD_LINK_3)" class="download-btn btn-3">${item.linkTitle3 || 'Lấy Link 3'}</button>` : ''}
                         </div>
                     </div>
                 </div>`;
