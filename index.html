@@ -97,8 +97,10 @@
         }
         .card:hover { transform: translateY(-8px); border-color: #404040; box-shadow: 0 15px 30px rgba(0,0,0,0.8); }
         
-        .video-container { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        /* KHUNG VIDEO VÀ ẢNH CHUẨN TỶ LỆ 16:9 */
+        .media-container { position: relative; width: 100%; padding-bottom: 56.25%; background: #050505; border-bottom: 1px solid #262626;}
+        .media-container iframe, .media-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .media-container img { object-fit: contain; padding: 5px; } /* contain giúp ảnh ko bị cắt xén */
         
         .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
         .card h3 { font-size: 18px; margin-bottom: 10px; line-height: 1.4; color: #fff; }
@@ -138,6 +140,7 @@
 </head>
 <body>
 
+    <!-- THANH MENU TRÁI -->
     <div class="sidebar">
         <div class="logo">🔥 <span>THANH ĐÂY</span></div>
         
@@ -153,11 +156,13 @@
 
         <div class="socials">
             <div style="color: #666; font-size: 12px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase;">Cộng đồng</div>
+            <!-- NHỚ THAY ĐỔI LINK CỦA BẠN VÀO ĐÂY NHÉ -->
             <a href="LINK_TELEGRAM_CUA_BAN" target="_blank" class="soc-btn tele">✈️ Tham gia Telegram</a>
             <a href="LINK_DISCORD_CUA_BAN" target="_blank" class="soc-btn disc">👾 Tham gia Discord</a>
         </div>
     </div>
 
+    <!-- NỘI DUNG CHÍNH -->
     <div class="main-content">
         <div class="top-bar">
             <h2 class="section-header" id="categoryTitle">🔥 Free Fire</h2>
@@ -277,10 +282,10 @@
                 const embedLink = getEmbedUrl(item.video);
                 
                 if (embedLink) {
-                    mediaHtml = `<div class="video-container"><iframe src="${embedLink}" allowfullscreen></iframe></div>`;
+                    mediaHtml = `<div class="media-container"><iframe src="${embedLink}" allowfullscreen></iframe></div>`;
                 } else {
                     let imgSource = item.image ? item.image : 'https://via.placeholder.com/600x337?text=NO+IMAGE';
-                    mediaHtml = `<img src="${imgSource}" alt="Ảnh" style="width:100%; height:200px; object-fit:cover;">`;
+                    mediaHtml = `<div class="media-container"><img src="${imgSource}" alt="Ảnh"></div>`;
                 }
 
                 // Chèn link QC đã được đảo lộn vào 3 nút
