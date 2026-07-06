@@ -15,6 +15,7 @@
             --primary: #3b82f6;
             --ff-color: #ef4444;
             --rb-color: #10b981;
+            --rb2-color: #059669;
             --mm-color: #f59e0b;
             --acc-color: #ec4899;
         }
@@ -44,8 +45,11 @@
         }
         .menu-item:hover { background: rgba(255,255,255,0.05); color: white; }
         .menu-item.active { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        
+        /* Màu cho từng tab đang chọn */
         .menu-item.active.ff { border-left: 4px solid var(--ff-color); }
-        .menu-item.active.rb { border-left: 4px solid var(--rb-color); }
+        .menu-item.active.rb-client { border-left: 4px solid var(--rb-color); }
+        .menu-item.active.rb-script { border-left: 4px solid var(--rb2-color); }
         .menu-item.active.mm { border-left: 4px solid var(--mm-color); }
         .menu-item.active.acc { border-left: 4px solid var(--acc-color); }
 
@@ -134,15 +138,17 @@
 </head>
 <body>
 
-    <!-- THANH MENU TRÁI -->
     <div class="sidebar">
         <div class="logo">🔥 <span>THANH ĐÂY</span></div>
         
         <div class="menu-list">
-            <div class="menu-item ff active" onclick="changeTab('Free Fire', this)">🔥 Free Fire</div>
-            <div class="menu-item rb" onclick="changeTab('Roblox', this)">🎮 Roblox</div>
-            <div class="menu-item mm" onclick="changeTab('Kiếm Tiền', this)">💰 Web Kiếm Tiền</div>
-            <div class="menu-item acc" onclick="changeTab('Tặng Acc Free', this)">🎁 Tặng Acc Free</div>
+            <div class="menu-item ff active" onclick="changeTab('Free Fire', 'ff', this)">🔥 Free Fire</div>
+            
+            <div class="menu-item rb-client" onclick="changeTab('Roblox Client', 'rb-client', this)">🎮 Roblox Client</div>
+            <div class="menu-item rb-script" onclick="changeTab('Roblox Script', 'rb-script', this)">📜 Roblox Script</div>
+            
+            <div class="menu-item mm" onclick="changeTab('Kiếm Tiền', 'mm', this)">💰 Web Kiếm Tiền</div>
+            <div class="menu-item acc" onclick="changeTab('Tặng Acc Free', 'acc', this)">🎁 Tặng Acc Free</div>
         </div>
 
         <div class="socials">
@@ -152,7 +158,6 @@
         </div>
     </div>
 
-    <!-- NỘI DUNG CHÍNH -->
     <div class="main-content">
         <div class="top-bar">
             <h2 class="section-header" id="categoryTitle">🔥 Free Fire</h2>
@@ -171,10 +176,10 @@
     </div>
 
     <script>
-        // 1. LINK API GOOGLE SHEETS
+        // LINK API GOOGLE SHEETS
         const API_URL = "https://script.google.com/macros/s/AKfycbw0jFmXyWvimxqFbmWm8d1Pcyof6w3gug0aYKRVR82xs0xnfDBOyr2dtklNQik1UacU/exec";
         
-        // 2. LINK QUẢNG CÁO CỦA BẠN (Đã tích hợp)
+        // LINK QUẢNG CÁO
         const AD_LINK_1 = "https://www.effectivecpmnetwork.com/v3g8tvi2?key=40a3c0407a6d5a6a21fb09208dc6758d";
         const AD_LINK_2 = "https://www.effectivecpmnetwork.com/sv6tbzd5ub?key=4090a8c585e33443de502ad7ec2678ba";
         const AD_LINK_3 = "https://www.effectivecpmnetwork.com/sdmwabqk?key=99df44fe93fe3cdc2146ada41a3cf4b1";
@@ -182,19 +187,15 @@
         let allData = []; 
         let currentCategory = 'Free Fire';
         
-        // Biến lưu trữ lịch sử những nút đã bị bấm
+        // Biến lưu trữ lịch sử click quảng cáo
         const clickedLinks = {};
 
-        // 3. HÀM XỬ LÝ CLICK CHÈN QUẢNG CÁO
         function handleAdClick(event, realLink, adLink) {
-            event.preventDefault(); // Chặn việc mở link gốc ngay lập tức
-            
+            event.preventDefault(); 
             if (!clickedLinks[realLink]) {
-                // Lần 1: Chuyển sang link quảng cáo và đánh dấu đã click
                 clickedLinks[realLink] = true;
                 window.open(adLink, '_blank');
             } else {
-                // Lần 2: Mở link gốc
                 window.open(realLink, '_blank');
             }
         }
@@ -219,16 +220,19 @@
             }
         }
 
-        function changeTab(category, element) {
+        // Cập nhật hàm đổi Tab
+        function changeTab(category, tabClass, element) {
             currentCategory = category;
             
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
             
             let titlePrefix = "🔥";
-            if(category === "Roblox") titlePrefix = "🎮";
+            if(category === "Roblox Client") titlePrefix = "🎮";
+            if(category === "Roblox Script") titlePrefix = "📜";
             if(category === "Kiếm Tiền") titlePrefix = "💰";
             if(category === "Tặng Acc Free") titlePrefix = "🎁";
+            
             document.getElementById('categoryTitle').innerText = `${titlePrefix} ${category}`;
 
             if(category === "Tặng Acc Free") {
@@ -272,7 +276,6 @@
                     mediaHtml = `<img src="${imgSource}" alt="Ảnh" style="width:100%; height:200px; object-fit:cover;">`;
                 }
 
-                // Cập nhật sự kiện onClick vào 3 nút tải để gọi hàm chặn quảng cáo
                 html += `
                 <div class="card">
                     ${mediaHtml}
