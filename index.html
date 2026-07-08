@@ -94,13 +94,20 @@
             background: var(--bg-card); border-radius: 16px; overflow: hidden;
             border: 1px solid #262626; transition: 0.3s; display: flex; flex-direction: column;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            position: relative;
         }
         .card:hover { transform: translateY(-8px); border-color: #404040; box-shadow: 0 15px 30px rgba(0,0,0,0.8); }
         
-        /* KHUNG VIDEO VÀ ẢNH CHUẨN TỶ LỆ 16:9 */
+        /* Cục đếm Click siêu ngầu */
+        .click-count {
+            position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.8);
+            color: #f59e0b; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 800;
+            z-index: 10; border: 1px solid #f59e0b; box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
         .media-container { position: relative; width: 100%; padding-bottom: 56.25%; background: #050505; border-bottom: 1px solid #262626;}
         .media-container iframe, .media-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        .media-container img { object-fit: contain; padding: 5px; } /* contain giúp ảnh ko bị cắt xén */
+        .media-container img { object-fit: contain; padding: 5px; } 
         
         .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
         .card h3 { font-size: 18px; margin-bottom: 10px; line-height: 1.4; color: #fff; }
@@ -197,17 +204,37 @@
         let allData = []; 
         let currentCategory = 'Free Fire';
         
-        // Biến lưu trữ lịch sử click quảng cáo để mở khóa link thật
+        // Biến lưu trữ lịch sử click quảng cáo
         const clickedLinks = {};
+        
+        // Biến lưu trữ bài viết đã cộng click (để tránh 1 người spam click nhiều lần 1 bài)
+        const countedPosts = {};
 
-        function handleAdClick(event, realLink, adLink) {
+        // HÀM XỬ LÝ CLICK & ĐẾM
+        function handleAdClick(event, realLink, adLink, postTitle) {
             event.preventDefault(); 
+            
+            // Nếu bài viết này chưa được đếm click trong phiên này, gửi lệnh đếm lên Google Sheets
+            if(!countedPosts[postTitle]) {
+                countedPosts[postTitle] = true; // Đánh dấu đã đếm
+                // Gửi lệnh ngầm không ảnh hưởng tốc độ click
+                fetch(API_URL + "?action=click&title=" + encodeURIComponent(postTitle), { mode: 'no-cors' }).catch(e => console.log(e));
+                
+                // Cập nhật số liệu hiển thị ảo trên giao diện ngay lập tức cho ngầu
+                let countElem = document.getElementById('click-count-' + CSS.escape(postTitle));
+                if(countElem) {
+                    let currentNum = parseInt(countElem.innerText.replace(/[^0-9]/g, '')) || 0;
+                    countElem.innerText = `🔥 ${currentNum + 1} Lượt tải`;
+                }
+            }
+
+            // Xử lý chặn quảng cáo
             if (!clickedLinks[realLink]) {
-                // Đã nhấn QC lần 1, đánh dấu
+                // Lần 1 mở Quảng cáo
                 clickedLinks[realLink] = true;
                 window.open(adLink, '_blank');
             } else {
-                // Lần 2 mở link thật
+                // Lần 2 mở Link Thật
                 window.open(realLink, '_blank');
             }
         }
@@ -288,18 +315,22 @@
                     mediaHtml = `<div class="media-container"><img src="${imgSource}" alt="Ảnh"></div>`;
                 }
 
-                // Chèn link QC đã được đảo lộn vào 3 nút
+                // Tiêu đề được xử lý an toàn để nhúng vào function JS
+                const safeTitle = item.title.replace(/'/g, "\\'");
+                const clickText = item.clicks > 0 ? `🔥 ${item.clicks} Lượt tải` : `🔥 Mới nhất`;
+
                 html += `
                 <div class="card">
+                    <div class="click-count" id="click-count-${item.title}">${clickText}</div>
                     ${mediaHtml}
                     <div class="card-content">
                         <h3>${item.title}</h3>
                         ${item.content ? `<p>${item.content.replace(/\n/g, '<br>')}</p>` : ''}
                         
                         <div class="links-group">
-                            ${item.link1 ? `<button onclick="handleAdClick(event, '${item.link1}', adLinks[0])" class="download-btn btn-1">${item.linkTitle1 || 'Lấy Link 1'}</button>` : ''}
-                            ${item.link2 ? `<button onclick="handleAdClick(event, '${item.link2}', adLinks[1])" class="download-btn btn-2">${item.linkTitle2 || 'Lấy Link 2'}</button>` : ''}
-                            ${item.link3 ? `<button onclick="handleAdClick(event, '${item.link3}', adLinks[2])" class="download-btn btn-3">${item.linkTitle3 || 'Lấy Link 3'}</button>` : ''}
+                            ${item.link1 ? `<button onclick="handleAdClick(event, '${item.link1}', adLinks[0], '${safeTitle}')" class="download-btn btn-1">${item.linkTitle1 || 'Lấy Link 1'}</button>` : ''}
+                            ${item.link2 ? `<button onclick="handleAdClick(event, '${item.link2}', adLinks[1], '${safeTitle}')" class="download-btn btn-2">${item.linkTitle2 || 'Lấy Link 2'}</button>` : ''}
+                            ${item.link3 ? `<button onclick="handleAdClick(event, '${item.link3}', adLinks[2], '${safeTitle}')" class="download-btn btn-3">${item.linkTitle3 || 'Lấy Link 3'}</button>` : ''}
                         </div>
                     </div>
                 </div>`;
