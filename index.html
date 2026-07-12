@@ -46,7 +46,6 @@
         .menu-item:hover { background: rgba(255,255,255,0.05); color: white; }
         .menu-item.active { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         
-        /* Màu cho từng tab đang chọn */
         .menu-item.active.ff { border-left: 4px solid var(--ff-color); }
         .menu-item.active.rb-client { border-left: 4px solid var(--rb-color); }
         .menu-item.active.rb-script { border-left: 4px solid var(--rb2-color); }
@@ -98,7 +97,6 @@
         }
         .card:hover { transform: translateY(-8px); border-color: #404040; box-shadow: 0 15px 30px rgba(0,0,0,0.8); }
         
-        /* Cục đếm Click siêu ngầu */
         .click-count {
             position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.8);
             color: #f59e0b; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 800;
@@ -125,6 +123,18 @@
 
         .loader { text-align: center; padding: 50px; color: var(--text-sub); font-size: 16px; }
 
+        /* NÚT PHÁT NHẠC NỔI GÓC DƯỚI PHẢI */
+        .music-btn {
+            position: fixed; bottom: 30px; right: 30px; z-index: 9999;
+            background: var(--primary); color: white; border: none;
+            padding: 12px 20px; border-radius: 50px; font-weight: bold; font-size: 14px;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5);
+            transition: 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .music-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.8); }
+        .music-btn.playing { background: var(--ff-color); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5); }
+        .music-btn.playing:hover { box-shadow: 0 6px 20px rgba(239, 68, 68, 0.8); }
+
         /* GIAO DIỆN ĐIỆN THOẠI */
         @media (max-width: 768px) {
             body { flex-direction: column; }
@@ -142,10 +152,20 @@
             .top-bar { flex-direction: column; align-items: flex-start; }
             .search-box { width: 100%; }
             .section-header { font-size: 24px; }
+            .music-btn { bottom: 20px; right: 20px; padding: 10px 15px; font-size: 13px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- TRÌNH PHÁT NHẠC ẨN -->
+    <!-- BẠN THAY LINK NHẠC ĐUÔI .MP3 CỦA BẠN VÀO BÊN DƯỚI NHÉ -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- NÚT BẬT TẮT NHẠC NỔI -->
+    <button class="music-btn" id="musicToggleBtn" onclick="toggleMusic()">🔇 Bật Nhạc</button>
 
     <!-- THANH MENU TRÁI -->
     <div class="sidebar">
@@ -163,7 +183,6 @@
 
         <div class="socials">
             <div style="color: #666; font-size: 12px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase;">Cộng đồng</div>
-            <!-- NHỚ THAY ĐỔI LINK CỦA BẠN VÀO ĐÂY NHÉ -->
             <a href="LINK_TELEGRAM_CUA_BAN" target="_blank" class="soc-btn tele">✈️ Tham gia Telegram</a>
             <a href="LINK_DISCORD_CUA_BAN" target="_blank" class="soc-btn disc">👾 Tham gia Discord</a>
         </div>
@@ -188,39 +207,48 @@
     </div>
 
     <script>
-        // LINK API GOOGLE SHEETS
+        // --- XỬ LÝ BẬT/TẮT NHẠC NỀN ---
+        let isMusicPlaying = false;
+        const bgMusic = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicToggleBtn');
+
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                musicBtn.innerHTML = '🔇 Bật Nhạc';
+                musicBtn.classList.remove('playing');
+            } else {
+                bgMusic.play();
+                musicBtn.innerHTML = '🔊 Tắt Nhạc';
+                musicBtn.classList.add('playing');
+            }
+            isMusicPlaying = !isMusicPlaying;
+            // Chỉnh âm lượng nhạc nền (0.5 là 50% để không quá chói tai)
+            bgMusic.volume = 0.5; 
+        }
+
+        // --- CÁC TÍNH NĂNG KHÁC CỦA WEB CHỮA NGUYÊN ---
         const API_URL = "https://script.google.com/macros/s/AKfycbw0jFmXyWvimxqFbmWm8d1Pcyof6w3gug0aYKRVR82xs0xnfDBOyr2dtklNQik1UacU/exec";
         
-        // MẢNG CHỨA 3 LINK QUẢNG CÁO
         let adLinks = [
             "https://www.effectivecpmnetwork.com/v3g8tvi2?key=40a3c0407a6d5a6a21fb09208dc6758d",
             "https://www.effectivecpmnetwork.com/sv6tbzd5ub?key=4090a8c585e33443de502ad7ec2678ba",
             "https://www.effectivecpmnetwork.com/sdmwabqk?key=99df44fe93fe3cdc2146ada41a3cf4b1"
         ];
-        
-        // TỰ ĐỘNG ĐẢO NGẪU NHIÊN 3 LINK QUẢNG CÁO MỖI KHI TẢI TRANG
         adLinks.sort(() => Math.random() - 0.5);
 
         let allData = []; 
         let currentCategory = 'Free Fire';
-        
-        // Biến lưu trữ lịch sử click quảng cáo
         const clickedLinks = {};
-        
-        // Biến lưu trữ bài viết đã cộng click (để tránh 1 người spam click nhiều lần 1 bài)
         const countedPosts = {};
 
-        // HÀM XỬ LÝ CLICK & ĐẾM
         function handleAdClick(event, realLink, adLink, postTitle) {
             event.preventDefault(); 
             
-            // Nếu bài viết này chưa được đếm click trong phiên này, gửi lệnh đếm lên Google Sheets
             if(!countedPosts[postTitle]) {
-                countedPosts[postTitle] = true; // Đánh dấu đã đếm
-                // Gửi lệnh ngầm không ảnh hưởng tốc độ click
+                countedPosts[postTitle] = true; 
                 fetch(API_URL + "?action=click&title=" + encodeURIComponent(postTitle), { mode: 'no-cors' }).catch(e => console.log(e));
                 
-                // Cập nhật số liệu hiển thị ảo trên giao diện ngay lập tức cho ngầu
                 let countElem = document.getElementById('click-count-' + CSS.escape(postTitle));
                 if(countElem) {
                     let currentNum = parseInt(countElem.innerText.replace(/[^0-9]/g, '')) || 0;
@@ -228,13 +256,10 @@
                 }
             }
 
-            // Xử lý chặn quảng cáo
             if (!clickedLinks[realLink]) {
-                // Lần 1 mở Quảng cáo
                 clickedLinks[realLink] = true;
                 window.open(adLink, '_blank');
             } else {
-                // Lần 2 mở Link Thật
                 window.open(realLink, '_blank');
             }
         }
@@ -259,7 +284,6 @@
             }
         }
 
-        // Đổi Tab
         function changeTab(category, tabClass, element) {
             currentCategory = category;
             
@@ -315,7 +339,6 @@
                     mediaHtml = `<div class="media-container"><img src="${imgSource}" alt="Ảnh"></div>`;
                 }
 
-                // Tiêu đề được xử lý an toàn để nhúng vào function JS
                 const safeTitle = item.title.replace(/'/g, "\\'");
                 const clickText = item.clicks > 0 ? `🔥 ${item.clicks} Lượt tải` : `🔥 Mới nhất`;
 
